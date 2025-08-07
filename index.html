@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Calculator</title>
+    <style>
+        /* --- Fonts & Basic Styles --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+        :root {
+            --dark-bg: #12002b;
+            --pink-glow: #ff00c1;
+            --purple-glow: #a020f0;
+            --blue-glow: #00e5ff;
+            --text-light: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
+            font-weight: 700;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            text-align: center;
+            overflow-x: hidden;
+            /* Add padding to the bottom to prevent ad from overlapping content */
+            padding: 20px 20px 80px 20px; 
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 20px var(--pink-glow); }
+            50% { transform: scale(1.05); text-shadow: 0 0 35px var(--pink-glow), 0 0 50px var(--purple-glow); }
+        }
+
+        @keyframes giftPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes neonBorder {
+            0%, 100% { box-shadow: 0 0 5px var(--purple-glow), 0 0 10px var(--purple-glow), inset 0 0 5px var(--purple-glow); }
+            50% { box-shadow: 0 0 10px var(--pink-glow), 0 0 20px var(--pink-glow), inset 0 0 10px var(--pink-glow); }
+        }
+
+        /* --- Header & Title --- */
+        .romantic-header img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 15px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            color: var(--text-light);
+            margin: 20px 0;
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        /* --- Form Elements --- */
+        .love-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--purple-glow);
+            border-radius: 50px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--purple-glow), inset 0 0 8px rgba(160, 32, 240, 0.5);
+        }
+
+        .input-field::placeholder {
+            color: rgba(245, 245, 245, 0.7);
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--pink-glow), 0 0 25px var(--pink-glow), inset 0 0 10px var(--pink-glow);
+            border-color: var(--pink-glow);
+        }
+
+        .calculate-btn {
+            padding: 15px 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-light);
+            background: linear-gradient(45deg, var(--purple-glow), var(--pink-glow));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: neonBorder 2s infinite;
+        }
+
+        .calculate-btn:hover {
+            transform: scale(1.05);
+            animation-play-state: paused;
+            box-shadow: 0 0 20px var(--pink-glow), 0 0 35px var(--pink-glow);
+        }
+
+        /* --- Result & Gift --- */
+        #result-message {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            min-height: 70px; 
+            padding: 10px;
+            color: var(--blue-glow);
+            text-shadow: 0 0 10px var(--blue-glow);
+        }
+
+        #gift-box {
+            display: none;
+            margin-top: 20px;
+            font-size: 4rem;
+            cursor: pointer;
+            animation: giftPulse 1.5s infinite ease-in-out;
+        }
+
+        /* --- Floating Buttons --- */
+        .fixed-button {
+            position: fixed;
+            background-color: var(--pink-glow);
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px var(--pink-glow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .fixed-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--pink-glow);
+        }
+
+        #whatsapp-share {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #25D366;
+            box-shadow: 0 0 20px #25D366;
+        }
+
+        #music-toggle {
+            left: 20px;
+            bottom: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* --- Ad Container Style --- */
+        #ad-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 50px;
+            max-width: 100%;
+            z-index: 9999; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="romantic-header">
+        <img src="https://i.ibb.co/6gBv3fM/love.gif" alt="Romantic Animation">
+    </header>
+
+    <main>
+        <h1 class="main-title">Love Calculator</h1>
+
+        <form class="love-form" id="loveForm">
+            <input type="text" id="yourName" class="input-field" placeholder="Your Name" required>
+            <input type="text" id="crushName" class="input-field" placeholder="Crush's Name" required>
+            <button type="submit" class="calculate-btn">💓 Calculate Love 💓</button>
+        </form>
+
+        <div id="result-message"></div>
+        <div id="gift-box" title="Click for a surprise gift!">🎁</div>
+    </main>
+    
+    <!-- Background Music -->
+    <audio id="background-music" src="https://assets.mixkit.co/music/preview/mixkit-a-very-happy-christmas-897.mp3" autoplay loop></audio>
+    
+    <!-- Floating Buttons -->
+    <a id="whatsapp-share" class="fixed-button" href="#" target="_blank" title="Share on WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+    </a>
+
+    <button id="music-toggle" class="fixed-button" title="Mute/Unmute Music">🔊</button>
+    
+    <!-- Adsterra Ad Container -->
+    <div id="ad-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '0a11c58ca05fd93fa2404e4f8761aec8',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/0a11c58ca05fd93fa2404e4f8761aec8/invoke.js"></script>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loveForm = document.getElementById('loveForm');
+            const yourNameInput = document.getElementById('yourName');
+            const crushNameInput = document.getElementById('crushName');
+            const resultMessage = document.getElementById('result-message');
+            const giftBox = document.getElementById('gift-box');
+            const whatsappShareBtn = document.getElementById('whatsapp-share');
+
+            // --- Music Controls ---
+            const music = document.getElementById('background-music');
+            const musicToggleBtn = document.getElementById('music-toggle');
+            let isMusicPlaying = false; 
+
+            const playPromise = music.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isMusicPlaying = true;
+                    musicToggleBtn.textContent = '🔊';
+                }).catch(error => {
+                    isMusicPlaying = false;
+                    musicToggleBtn.textContent = '🔇';
+                });
+            }
+
+            musicToggleBtn.addEventListener('click', () => {
+                if (window.innerWidth <= 400) {
+                     musicToggleBtn.style.bottom = '80px';
+                }
+                
+                if (isMusicPlaying) {
+                    music.pause();
+                    musicToggleBtn.textContent = '🔇';
+                } else {
+                    music.play();
+                    musicToggleBtn.textContent = '🔊';
+                }
+                isMusicPlaying = !isMusicPlaying;
+            });
+
+            // --- Love Calculation Logic ---
+            loveForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const yourName = yourNameInput.value.trim();
+                const crushName = crushNameInput.value.trim();
+
+                if (!yourName || !crushName) {
+                    resultMessage.textContent = 'Please enter both names! ✨';
+                    return;
+                }
+
+                const value1 = getCharValue(yourName.charAt(0));
+                const value2 = getCharValue(crushName.charAt(0));
+
+                let compatibility = (value1 + value2) % 101; 
+                
+                if (compatibility < 50) {
+                    compatibility = 50 + (compatibility % 51);
+                }
+
+                const finalMessage = `❤️ ${yourName} & ${crushName} are ${compatibility}% compatible! Love is blooming! 🌹`;
+                
+                resultMessage.textContent = finalMessage;
+                giftBox.style.display = 'block';
+
+                const shareText = encodeURIComponent(`${finalMessage} Check yours here: ${window.location.href}`);
+                whatsappShareBtn.href = `https://api.whatsapp.com/send?text=${shareText}`;
+            });
+
+            function getCharValue(char) {
+                const lowerChar = char.toLowerCase();
+                if (lowerChar >= 'a' && lowerChar <= 'z') {
+                    return (lowerChar.charCodeAt(0) - 'a'.charCodeAt(0) + 1) * 10;
+                }
+                return 50;
+            }
+
+            // --- Gift Box Logic ---
+            giftBox.addEventListener('click', () => {
+                // ### THIS LINK HAS BEEN UPDATED ###
+                window.open('https://affiliate.meesho.com/collection/NDgwMDkyJTNBJTNBJTNBMTY2MDg4NCUzQSUzQSUzQW5vcm1hbA', '_blank');
+            });
+        });
+    </script>
+
+</body>
+</html>
